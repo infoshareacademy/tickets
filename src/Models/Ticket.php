@@ -1,5 +1,7 @@
 <?php
 
+namespace Tickets\Models;
+
 class Ticket
 {
     private $title;
