@@ -2,14 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: katban
- * Date: 05.11.15
+ * Date: 05-06.11.15
  * Time: 16:36
  */
+
+
 
 namespace Tickets\Connectors;
 
 
-class AllegroApiConnector
+class AllegroConnector
 {
     const APIURL = 'https://webapi.allegro.pl/service.php?wsdl';
     const LOGIN = 'Ivone107';
@@ -20,11 +22,7 @@ class AllegroApiConnector
 //    ];
     protected $apiVersion;
 
-    private static $idSesson;
-//    private $optionToConnect;
-
-//    $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
-//
+    private static $idSession;
 
     private $client;
 
@@ -53,14 +51,14 @@ class AllegroApiConnector
         ];
 
         $response = $this->client->doLogin($request);
-        self::$idSesson = $response->sessionHandlePart;
+        self::$idSession = $response->sessionHandlePart;
     }
 
     public function getIdSesion() {
-        if(!self::$idSesson) {
+        if(!self::$idSession) {
             $this->login();
         }
-        return self::$idSesson;
+        return self::$idSession;
     }
 
     private function getApiVersion() {
@@ -73,5 +71,54 @@ class AllegroApiConnector
         $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
     }
 
+    private function collectId($idCategory) {
+        $request = [
+            'filterOptions' => [[
+                'filterId' => 'category',
+                'filterValueId' => [$idCategory]
+            ]],
+            'countryId' => 1,
+            'webapiKey' => self::APIKEY
+        ];
+        $itemList = $this->client->DoGetItemsList($request);
+        $list = $itemList->itemsList->item;
+        $idTable = [];
+
+        foreach ($list as $itemArray) {
+            foreach ($itemArray as $key => $value) {
+                if ($key == 'itemId') {
+                    array_push($idTable, $value);
+                }
+            }
+        }
+        return $idTable;
+    }
+
+    private function getDetails($itemsId) {
+
+    }
+
+    public function getItems($methodName) {
+        switch ($methodName) {
+            case 'sport':
+                $idCategoryInAllegro = 101373;
+                break;
+
+            case 'music':
+                $idCategoryInAllegro = 101359;
+                break;
+
+            default:
+                $error = ['error' => 1 ];
+        }
+        $itemsId = $this->collectId($idCategoryInAllegro);
+//        $itemsCount = $this->getItemsCount($idCategoryInAllegro);
+        $allItems = $this->getDetails($itemsId);
+        return $allItems;
+    }
+
 }
+//
+$zapytanie = new AllegroConnector();
+$zapytanie->getItems('sport');
 
