@@ -9,7 +9,9 @@
 namespace Tickets\Presenters;
 
 
+use Tickets\Models\Ticket;
+
 class JsonPresenter
 {
-    public function presentTickets($tickets){}
+public function presentTickets(array $tickets){}
 }

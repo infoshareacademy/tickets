@@ -10,5 +10,5 @@ namespace Tickets\Routers;
 
 class CollectorRouter
 {
-public function getTickets();
+public function getTickets(){}
 }
