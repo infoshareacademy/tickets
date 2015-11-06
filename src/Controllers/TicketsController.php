@@ -11,5 +11,11 @@ namespace Tickets\Controllers;
 
 class TicketsController
 {
-public function collectTickets();
+    protected $tickets = array[];
+
+public function collectTickets($ticketData);
+
+
+
+
 }
