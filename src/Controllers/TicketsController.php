@@ -1,21 +1,35 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fiona
- * Date: 06.11.15
- * Time: 14:00
- */
 
 namespace Tickets\Controllers;
 
 
+use Tickets\Bridges\AllegroBridge;
+
 class TicketsController
 {
-    protected $tickets = array[];
+    private $allegroBridge;
 
-public function collectTickets($ticketData);
+    public function __construct($allegroBridge = null)
+    {
+        if($allegroBridge) {
+            $this->allegroBridge = $allegroBridge;
+        } else {
+            $this->allegroBridge = new AllegroBridge();
+        }
+    }
+
+//    protected $tickets = array[];
+
+public function collectTickets(){
+    $this->allegroBridge->getConcertTickers();
+
+}
+
+//$this-> = $ticketData['idClient'];
 
 
 
 
 }
+
+

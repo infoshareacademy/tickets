@@ -14,7 +14,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Tickets\\": "src/"
+      "Tickets\\": "src/",
+      "Tickets\\Controllers": "src/Controllers"
     }
   }
 }
