@@ -11,7 +11,7 @@ namespace Tickets\Bridges;
 
 class AllegroBridge
 {
-public function getSportTickers();
+public function getSportTickers(){}
 
-public function getConcertTickers();
+public function getConcertTickers(){}
 }

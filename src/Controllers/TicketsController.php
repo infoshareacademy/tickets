@@ -11,5 +11,5 @@ namespace Tickets\Controllers;
 
 class TicketsController
 {
-public function collectTickets();
+public function collectTickets(){}
 }
