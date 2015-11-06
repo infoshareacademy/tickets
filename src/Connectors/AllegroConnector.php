@@ -17,9 +17,7 @@ class AllegroConnector
     const LOGIN = 'Ivone107';
     const PASSWORD = 'Kopcioland1';
     const APIKEY = '99275d6f';
-//    const OPTIONS = [
-//        'features' => SOAP_SINGLE_ELEMENT_ARRAYS
-//    ];
+
     protected $apiVersion;
 
     private static $idSession;
@@ -34,18 +32,19 @@ class AllegroConnector
             $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
             $this->client = new \SoapClient(self::APIURL, $options);
         }
+        $this->login();
     }
 
     private function login() {
 
-        if($this->apiVersion = null) {
+        if($this->apiVersion == null) {
             $this->getApiVersion();
         }
 
         $request = [
             'userLogin' => self::LOGIN,
             'userPassword' => self::PASSWORD,
-            'countryId' => 1,
+            'countryCode' => 1,
             'webapiKey' => self::APIKEY,
             'localVersion' => $this->apiVersion
         ];
@@ -80,7 +79,7 @@ class AllegroConnector
             'countryId' => 1,
             'webapiKey' => self::APIKEY
         ];
-        $itemList = $this->client->DoGetItemsList($request);
+        $itemList = $this->client->doGetItemsList($request);
         $list = $itemList->itemsList->item;
         $idTable = [];
 
@@ -94,8 +93,31 @@ class AllegroConnector
         return $idTable;
     }
 
-    private function getDetails($itemsId) {
+    private function getItemInfo($tableId) {
+        $request = [
+            'sessionHandle' => self::$idSession,
+            'itemsIdArray' => $tableId
+        ];
+        $response = $this->client->doGetItemsInfo($request);
+        //it needs error handeling
+        return $response;
+    }
 
+    private function getDetails($itemsId) {
+        $limitFromAllegro = 25;
+        $numberOfArguments = count($itemsId);
+        $numberOfLoops = (int)($numberOfArguments / $limitFromAllegro);
+
+        $sharedId = array_chunk($itemsId, $limitFromAllegro);
+
+        //todo: collectionItems now returns array with some expanded objects - cut this big structure and returns simplified array (only with items)
+        $collectionItems = [];
+
+        for ($i = 0; $i <= $numberOfLoops; $i++) {
+            $answerFromAllegro = $this->getItemInfo($sharedId[$i]);
+            array_push($collectionItems, $answerFromAllegro);
+        }
+        return $collectionItems;
     }
 
     public function getItems($methodName) {
@@ -114,6 +136,7 @@ class AllegroConnector
         $itemsId = $this->collectId($idCategoryInAllegro);
 //        $itemsCount = $this->getItemsCount($idCategoryInAllegro);
         $allItems = $this->getDetails($itemsId);
+        print_r($allItems);
         return $allItems;
     }
 
