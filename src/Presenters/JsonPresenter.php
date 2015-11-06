@@ -11,5 +11,5 @@ namespace Tickets\Presenters;
 
 class JsonPresenter
 {
-public function presentTickets($tickets);
+    public function presentTickets($tickets){}
 }

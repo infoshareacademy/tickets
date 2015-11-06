@@ -1,9 +1,5 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
-require_once "../src/Controllers/TicketsController.php";
-require_once "../src/Bridges/AllegroBridge.php";
-
 use Tickets\Controllers\TicketsController;
 
 class TicketsControllerTest extends PHPUnit_Framework_TestCase
@@ -40,7 +36,7 @@ class TicketsControllerTest extends PHPUnit_Framework_TestCase
     }
 
     // został wywołany presenter, i jego wynik został zwrócony przez controller
-    public function testCollectedMusicTickets1()
+    public function testJsonPresenter()
     {
         // given
         $ticketsPresenter = $this->getMock('Tickets\Presenter\JsonPresenter');
