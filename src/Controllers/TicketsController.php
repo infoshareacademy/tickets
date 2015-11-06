@@ -21,7 +21,8 @@ class TicketsController
 //    protected $tickets = array[];
 
 public function collectTickets(){
-    $this->allegroBridge->getConcertTickers();
+    $this->allegroBridge->getConcertTickets();
+    $this->allegroBridge->getSportTickets();
 
 }
 

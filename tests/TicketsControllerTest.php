@@ -11,11 +11,13 @@ class TicketsControllerTest extends PHPUnit_Framework_TestCase
 
     private $instance;
 
-    public function testCollectedMusicTickets()
+    //koncerty
+
+    public function testCollectedConcertTickets()
     {
         // given
         $allegroBridge = $this->getMock('Tickets\Bridges\AllegroBridge');
-        $allegroBridge->expects($this->once())->method('getConcertTickers');
+        $allegroBridge->expects($this->once())->method('getConcertTickets');
         $instance = new TicketsController($allegroBridge);
 
         // when
@@ -24,6 +26,18 @@ class TicketsControllerTest extends PHPUnit_Framework_TestCase
     }
 
     // sprtowe
+
+    public function testCollectedSportTickets()
+    {
+        // given
+        $allegroBridge = $this->getMock('Tickets\Bridges\AllegroBridge');
+        $allegroBridge->expects($this->once())->method('getSportTickets');
+        $instance = new TicketsController($allegroBridge);
+
+        // when
+        $instance->collectTickets();
+
+    }
 
     // został wywołany presenter, i jego wynik został zwrócony przez controller
     public function testCollectedMusicTickets1()
