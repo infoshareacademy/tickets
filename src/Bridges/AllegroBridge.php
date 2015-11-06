@@ -16,26 +16,43 @@ class AllegroBridge
 {
     private $rawAllegroTickets;
     private $tickets = [];
+    private $connector;
 
-    public function getSportTickers(){
+    public function __construct ($connector = null){
+        if ($connector) {
+            $this->connector = $connector;
+        } else {
+            $this->connector = new AllegroConnector();
+        }
+    }
+
+    public function getSportTickets(){
         $query = 'getSportTickets';
         $this->rawAllegroTickets = $this->createRawAllegroTickets($query);
-        return $this->transformToTicketObjects($this->rawAllegroTickets);
+        if (isset($this->rawAllegroTickets['error']) === true && empty($this->rawAllegroTickets['error']) === false ) {
+            return $this->tickets['error'] = 1;
+        } else {
+            return $this->transformToTicketObjects($this->rawAllegroTickets);
+        }
     }
 
-    public function getConcertTickers(){
+    public function getConcertTickets(){
         $query = 'getConcertTickets';
         $this->rawAllegroTickets = $this->createRawAllegroTickets($query);
-        return $this->transformToTicketObjects($this->rawAllegroTickets);
+        if (isset($this->rawAllegroTickets['error']) === true && empty($this->rawAllegroTickets['error']) === false ) {
+            return $this->tickets['error'] = 1;
+        } else {
+            return $this->transformToTicketObjects($this->rawAllegroTickets);
+        }
     }
 
-    private function createRawAllegroTickets($params){
-        $allegroConnect =  new AllegroConnector();
-        return $allegroConnect->call('GET', $params);
+    private function createRawAllegroTickets($params, $connector = null)
+    {
+        return  $this->connector->getItems($params);
     }
 
-    private function transformToTicketObjects ($rawAllegroTickets) {
-        foreach ($rawAllegroTickets as $rawTicket) {
+    private function transformToTicketObjects ($rawAllegroTicketsArr) {
+        foreach ($rawAllegroTicketsArr as $rawTicket) {
             $ticket =  new Ticket();
             $ticket->title = $rawTicket['ticketTitle'];
             $ticket->auctionUrl = $rawTicket['ticketAuctionUrl'];
