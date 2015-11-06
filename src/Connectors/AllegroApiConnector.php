@@ -26,10 +26,19 @@ class AllegroApiConnector
 //    $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
 //
 
+    private $client;
 
-    public function login() {
-        $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
-        $client = new \SoapClient(self::APIURL, $options);
+    public function __construct($client = null)
+    {
+        if($client) {
+            $this->client = $client;
+        } else {
+            $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
+            $this->client = new \SoapClient(self::APIURL, $options);
+        }
+    }
+
+    private function login() {
 
         if($this->apiVersion = null) {
             $this->getApiVersion();
@@ -43,7 +52,7 @@ class AllegroApiConnector
             'localVersion' => $this->apiVersion
         ];
 
-        $response = $client->doLogin($request);
+        $response = $this->client->doLogin($request);
         self::$idSesson = $response->sessionHandlePart;
     }
 
@@ -55,15 +64,12 @@ class AllegroApiConnector
     }
 
     private function getApiVersion() {
-        $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
-        $client = new \SoapClient(self::APIURL, $options);
-
         $request = [
             'countryId' => 1,
             'webapiKey' => self::APIKEY
         ];
 
-        $status = $client->doQueryAllSysStatus($request);
+        $status = $this->client->doQueryAllSysStatus($request);
         $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
     }
 
