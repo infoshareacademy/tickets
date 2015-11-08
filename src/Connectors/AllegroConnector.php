@@ -23,6 +23,7 @@ class AllegroConnector
     private static $idSession;
 
     private $client;
+    private $errorOperation;
 
     public function __construct($client = null)
     {
@@ -49,8 +50,14 @@ class AllegroConnector
             'localVersion' => $this->apiVersion
         ];
 
-        $response = $this->client->doLogin($request);
-        self::$idSession = $response->sessionHandlePart;
+        try {
+            $response = $this->client->doLogin($request);
+            self::$idSession = $response->sessionHandlePart;
+        }
+        catch (\SoapFault $error) {
+            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+        }
+
     }
 
     public function getIdSesion() {
@@ -136,12 +143,18 @@ class AllegroConnector
                 break;
 
             default:
-                $error = ['error' => 1 ];
+                $idCategoryInAllegro = null;
         }
-        $itemsId = $this->collectId($idCategoryInAllegro);
-//        $itemsCount = $this->getItemsCount($idCategoryInAllegro);
-        $allItems = $this->getDetails($itemsId);
-        print_r($allItems);
+        if ($idCategoryInAllegro) {
+            $itemsId = $this->collectId($idCategoryInAllegro);
+            $allItems = $this->getDetails($itemsId);
+            print_r($allItems);
+        }
+        else {
+            $allItems = [
+                'error' => 'This category is not defined'
+            ];
+        }
         return $allItems;
     }
 
