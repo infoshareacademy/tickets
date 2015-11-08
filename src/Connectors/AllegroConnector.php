@@ -103,19 +103,24 @@ class AllegroConnector
         return $response;
     }
 
+    private function getOnlyFoundItems($fullAllegroAnswer) {
+        $items = (array)$fullAllegroAnswer->arrayItemListInfo->item;
+        return $items;
+    }
+
     private function getDetails($itemsId) {
-        $limitFromAllegro = 25;
+        $limitFromAllegro = 25;  // allegro returns only 25 item's details
         $numberOfArguments = count($itemsId);
         $numberOfLoops = (int)($numberOfArguments / $limitFromAllegro);
-
+        // share table on subtable (per 25 positions)
         $sharedId = array_chunk($itemsId, $limitFromAllegro);
 
-        //todo: collectionItems now returns array with some expanded objects - cut this big structure and returns simplified array (only with items)
         $collectionItems = [];
 
         for ($i = 0; $i <= $numberOfLoops; $i++) {
             $answerFromAllegro = $this->getItemInfo($sharedId[$i]);
-            array_push($collectionItems, $answerFromAllegro);
+            $answerFromAllegro = $this->getOnlyFoundItems($answerFromAllegro);
+            $collectionItems = array_merge((array)$collectionItems, (array)$answerFromAllegro);
         }
         return $collectionItems;
     }
