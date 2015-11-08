@@ -104,7 +104,7 @@ class AllegroConnector
     }
 
     private function getOnlyFoundItems($fullAllegroAnswer) {
-        $items = (array)$fullAllegroAnswer->arrayItemListInfo->item;
+        $items = $fullAllegroAnswer->arrayItemListInfo->item;
         return $items;
     }
 
@@ -117,7 +117,7 @@ class AllegroConnector
 
         $collectionItems = [];
 
-        for ($i = 0; $i <= $numberOfLoops; $i++) {
+        for ($i = 0; $i < $numberOfLoops; $i++) {
             $answerFromAllegro = $this->getItemInfo($sharedId[$i]);
             $answerFromAllegro = $this->getOnlyFoundItems($answerFromAllegro);
             $collectionItems = array_merge((array)$collectionItems, (array)$answerFromAllegro);
