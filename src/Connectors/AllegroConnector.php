@@ -33,6 +33,8 @@ class AllegroConnector
             $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
             $this->client = new \SoapClient(self::APIURL, $options);
         }
+//todo: throw exceptions
+//        $this->errorOperation = null;
         $this->login();
     }
 
