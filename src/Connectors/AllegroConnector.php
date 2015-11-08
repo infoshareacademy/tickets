@@ -75,8 +75,13 @@ class AllegroConnector
             'webapiKey' => self::APIKEY
         ];
 
-        $status = $this->client->doQueryAllSysStatus($request);
-        $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
+        try {
+            $status = $this->client->doQueryAllSysStatus($request);
+            $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
+        }
+        catch (\SoapFault $error) {
+            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+        }
     }
 
     private function collectId($idCategory) {
