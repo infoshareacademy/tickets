@@ -30,11 +30,14 @@ class AllegroConnector
         if($client) {
             $this->client = $client;
         } else {
-            $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
-            $this->client = new \SoapClient(self::APIURL, $options);
+            try {
+                $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
+                $this->client = new \SoapClient(self::APIURL, $options);
+            }
+            catch (\SoapFault $error) {
+                $this->setError(1, $error->faultcode, $error->faultstring);
+            }
         }
-//todo: throw exceptions
-//        $this->errorOperation = null;
         $this->login();
     }
 
@@ -57,10 +60,7 @@ class AllegroConnector
             self::$idSession = $response->sessionHandlePart;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = [
-                'error' => 1,
-                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
-            ];
+            $this->setError(2, $error->faultcode, $error->faultstring);
         }
 
     }
@@ -83,10 +83,7 @@ class AllegroConnector
             $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = [
-                'error' => 2,
-                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
-            ];
+            $this->setError(3, $error->faultcode, $error->faultstring);
         }
     }
 
@@ -105,10 +102,7 @@ class AllegroConnector
             $list = $itemList->itemsList->item;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = [
-                'error' => 3,
-                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
-            ];
+            $this->setError(4, $error->faultcode, $error->faultstring);
             $list = [];
         }
         $idTable = [];
@@ -133,12 +127,9 @@ class AllegroConnector
             $response = $this->client->doGetItemsInfo($request);
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = [
-                'error' => 4,
-                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
-            ];
+            $this->setError(5, $error->faultcode, $error->faultstring);
+            $response = [];
         }
-        //it needs error handeling
         return $response;
     }
 
@@ -162,6 +153,13 @@ class AllegroConnector
             $collectionItems = array_merge((array)$collectionItems, (array)$answerFromAllegro);
         }
         return $collectionItems;
+    }
+
+    private function setError($numberOfError, $errorFromAllegro, $description){
+        $this->errorOperation = [
+            'error' => $numberOfError,
+            'description' => 'Error '. $errorFromAllegro . ': '. $description
+        ];
     }
 
     public function getItems($methodName) {
