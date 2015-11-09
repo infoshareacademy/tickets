@@ -57,7 +57,10 @@ class AllegroConnector
             self::$idSession = $response->sessionHandlePart;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+            $this->errorOperation = [
+                'error' => 1,
+                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
+            ];
         }
 
     }
@@ -80,7 +83,10 @@ class AllegroConnector
             $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+            $this->errorOperation = [
+                'error' => 2,
+                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
+            ];
         }
     }
 
@@ -93,8 +99,18 @@ class AllegroConnector
             'countryId' => 1,
             'webapiKey' => self::APIKEY
         ];
-        $itemList = $this->client->doGetItemsList($request);
-        $list = $itemList->itemsList->item;
+
+        try {
+            $itemList = $this->client->doGetItemsList($request);
+            $list = $itemList->itemsList->item;
+        }
+        catch (\SoapFault $error) {
+            $this->errorOperation = [
+                'error' => 3,
+                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
+            ];
+            $list = [];
+        }
         $idTable = [];
 
         foreach ($list as $itemArray) {
@@ -113,7 +129,15 @@ class AllegroConnector
             'getDesc' => 1,
             'itemsIdArray' => $tableId
         ];
-        $response = $this->client->doGetItemsInfo($request);
+        try {
+            $response = $this->client->doGetItemsInfo($request);
+        }
+        catch (\SoapFault $error) {
+            $this->errorOperation = [
+                'error' => 4,
+                'description' => 'Error '. $error->faultcode . ': '. $error->faultstring
+            ];
+        }
         //it needs error handeling
         return $response;
     }
