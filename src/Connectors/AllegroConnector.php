@@ -23,7 +23,6 @@ class AllegroConnector
     private static $idSession;
 
     private $client;
-    private $errorOperation;
 
     public function __construct($client = null)
     {
@@ -35,7 +34,7 @@ class AllegroConnector
                 $this->client = new \SoapClient(self::APIURL, $options);
             }
             catch (\SoapFault $error) {
-                $this->setError(1, $error->faultcode, $error->faultstring);
+                $this->setError($error->faultcode, $error->faultstring);
             }
         }
         $this->login();
@@ -60,7 +59,7 @@ class AllegroConnector
             self::$idSession = $response->sessionHandlePart;
         }
         catch (\SoapFault $error) {
-            $this->setError(2, $error->faultcode, $error->faultstring);
+            $this->setError($error->faultcode, $error->faultstring);
         }
 
     }
@@ -83,7 +82,7 @@ class AllegroConnector
             $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
         }
         catch (\SoapFault $error) {
-            $this->setError(3, $error->faultcode, $error->faultstring);
+            $this->setError($error->faultcode, $error->faultstring);
         }
     }
 
@@ -102,7 +101,8 @@ class AllegroConnector
             $list = $itemList->itemsList->item;
         }
         catch (\SoapFault $error) {
-            $this->setError(4, $error->faultcode, $error->faultstring);
+
+            $this->setError($error->faultcode, $error->faultstring);
             $list = [];
         }
         $idTable = [];
@@ -127,7 +127,7 @@ class AllegroConnector
             $response = $this->client->doGetItemsInfo($request);
         }
         catch (\SoapFault $error) {
-            $this->setError(5, $error->faultcode, $error->faultstring);
+            $this->setError($error->faultcode, $error->faultstring);
             $response = [];
         }
         return $response;
@@ -155,11 +155,8 @@ class AllegroConnector
         return $collectionItems;
     }
 
-    private function setError($numberOfError, $errorFromAllegro, $description){
-        $this->errorOperation = [
-            'error' => $numberOfError,
-            'description' => 'Error '. $errorFromAllegro . ': '. $description
-        ];
+    private function setError($errorFromAllegro, $description) {
+        throw new \ErrorException('Error '. $errorFromAllegro . ': '. $description);
     }
 
     public function getItems($category) {
@@ -182,14 +179,11 @@ class AllegroConnector
             print_r($allItems);
         }
         else {
-            $this->setError(6,'category', 'Wrong parametr in getItems');
+            $this->setError('category', 'Wrong parametr in getItems');
         }
-        if ($this->errorOperation == null) {
-            return $allItems;
-        }
-        else {
-            return $this->errorOperation;
-        }
+
+        return $allItems;
+
     }
 
 }
