@@ -110,6 +110,7 @@ class AllegroConnector
     private function getItemInfo($tableId) {
         $request = [
             'sessionHandle' => self::$idSession,
+            'getDesc' => 1,
             'itemsIdArray' => $tableId
         ];
         $response = $this->client->doGetItemsInfo($request);
