@@ -2,7 +2,7 @@
 /**
  * Created by PhpStorm.
  * User: katban
- * Date: 05-06.11.15
+ * Date: 09.11.15
  * Time: 16:36
  */
 
@@ -176,7 +176,6 @@ class AllegroConnector
         if ($idCategoryInAllegro) {
             $itemsId = $this->collectId($idCategoryInAllegro);
             $allItems = $this->getDetails($itemsId);
-            print_r($allItems);
         }
         else {
             $this->setError('category', 'Wrong parametr in getItems');
@@ -187,7 +186,5 @@ class AllegroConnector
     }
 
 }
-//
-$zapytanie = new AllegroConnector();
-$zapytanie->getItems('sport');
+
 
