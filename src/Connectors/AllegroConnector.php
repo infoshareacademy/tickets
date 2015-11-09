@@ -162,8 +162,8 @@ class AllegroConnector
         ];
     }
 
-    public function getItems($methodName) {
-        switch ($methodName) {
+    public function getItems($category) {
+        switch ($category) {
             case 'sport':
                 $idCategoryInAllegro = 101373;
                 break;
@@ -175,17 +175,21 @@ class AllegroConnector
             default:
                 $idCategoryInAllegro = null;
         }
+
         if ($idCategoryInAllegro) {
             $itemsId = $this->collectId($idCategoryInAllegro);
             $allItems = $this->getDetails($itemsId);
             print_r($allItems);
         }
         else {
-            $allItems = [
-                'error' => 'This category is not defined'
-            ];
+            $this->setError(6,'category', 'Wrong parametr in getItems');
         }
-        return $allItems;
+        if ($this->errorOperation == null) {
+            return $allItems;
+        }
+        else {
+            return $this->errorOperation;
+        }
     }
 
 }
