@@ -8,6 +8,7 @@ class Ticket
     private $auctionUrl;
     private $description;
     private $price;
+    private $type;
 
     public function __get($param_name){
         return $this->$param_name;
