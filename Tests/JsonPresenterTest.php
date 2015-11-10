@@ -1,69 +1,132 @@
 <?php
 
+namespace Tickets\Presenters;
 
-namespace Tickets\Tests;
-
+require_once '../vendor/autoload.php';
 
 use Tickets\Models\Ticket;
-use Tickets\Presenters\JsonPresenter;
 
 class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 {
-    public function testIfEmpty(){
+    public function _test_shouldReturnEmptyArrayWhenEmptyArrayInInput(){
         $instance = new JsonPresenter();
 
         $tickets = array();
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals('Sorry, there is no tickets matching your request', $result);
+        $this->assertEquals('[]', $result);
     }
 
-    public function testIfWrongFormat(){
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #empty#
+     */
+    public function test_shouldThrowNewExceptionWhenNoArrayInInput(){
         $instance = new JsonPresenter();
 
-        $tickets = 'someRandomTextNotMatchingThePattern';
+        $tickets = array('someRandomTextNotMatchingThePattern');
         $result = $instance->presentTickets($tickets);
-
-        $this->assertEquals('Sorry, something went wrong. Please try again or contact the Administrator', $result);
-
     }
 
-    public function testIfOneTicket(){
+    public function _test_shouldReturnArrayWithOneJsonWhenOneObjectInInput(){
         $instance = new JsonPresenter();
 
         $tickets = array();
-        $ticket = new Ticket();
-        $ticket->title = 'Title';
-        $ticket->auctionUrl = 'http://fancyportalwithtickets.com';
-        $ticket->description = 'A couple of words why this concert is such a Must Go';
-        $ticket->price = '100PLN';
+
+        $oneTicket = new Ticket();
+        $oneTicket->title = 'Title';
+        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
+        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
+        $oneTicket->price = '100PLN';
+        $oneTicket->type = 'concert';
+
+        $tickets[] = $oneTicket;
+
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals({
+        $this->assertEquals('[{
         "title" : "Title",
         "auctionUrl" : "http://fancyportalwithtickets.com",
         "description" : "A couple of words why this concert is such a Must Go",
-        "price" : "100PLN"}, $result);
-
+        "price" : "100PLN"}]', $result);
     }
 
-    public function testIfManyTickets(){
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessageRegExp #invalid.*#
+     */
+    public function _test_shouldThrowNewExceptionWhenWrongTicketObject(){
         $instance = new JsonPresenter();
 
-        $tickets =
+        $tickets = array();
+
+        $oneTicket = new Ticket();
+        $oneTicket->title = 'Title';
+        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
+        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
+        $oneTicket->price = '100PLN';
+        $oneTicket->type = 'concert';
+
+        $tickets[] = $oneTicket;
+
         $result = $instance->presentTickets($tickets);
-
-        $this->assertEquals('Sorry, there is no tickets matching your request', $result);
-
     }
 
-    public function testIfWrongProperties(){
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessageRegExp #missing.*#
+     */
+
+    public function _test_shouldThrowNewExceptionWhenMissingDataInObject(){
         $instance = new JsonPresenter();
 
-        $tickets =
+        $tickets = array();
+
+        $oneTicket = new Ticket();
+        $oneTicket->title = 'Title';
+        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
+        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
+
+        $tickets[] = $oneTicket;
+
+        $result = $instance->presentTickets($tickets);
+    }
+
+    public function _test_shouldReturnArrayOfJsonsWhenManyObjectsInInput(){
+        $instance = new JsonPresenter();
+
+        $tickets = array();
+
+        $oneTicket = new Ticket();
+        $oneTicket->title = 'Title';
+        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
+        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
+        $oneTicket->price = '100PLN';
+        $oneTicket->type = 'concert';
+
+        $anotherTicket = new Ticket();
+        $anotherTicket->title = 'different title';
+        $anotherTicket->auctionUrl = 'http://ecommercewithtickets.com';
+        $anotherTicket->description = 'Short text trying to convince us that this event is worth our monthly salary';
+        $anotherTicket->price = '1200PLN';
+        $oneTicket->type = 'sport';
+
+        $tickets[] = $oneTicket;
+        $tickets[] = $anotherTicket;
+
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals('Sorry, there is no tickets matching your request', $result);
+        $expectedResult = '[{
+            "title" : "Title",
+        "auctionUrl" : "http://fancyportalwithtickets.com",
+        "description" : "A couple of words why this concert is such a Must Go",
+        "price" : "100PLN"},{
+            "title" : "Title",
+        "auctionUrl" : "http://fancyportalwithtickets.com",
+        "description" : "A couple of words why this concert is such a Must Go",
+        "price" : "100PLN"}]';
+
+        $this->assertEquals($expectedResult, $result);
     }
 
 }

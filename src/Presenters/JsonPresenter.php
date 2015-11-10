@@ -9,9 +9,12 @@
 namespace Tickets\Presenters;
 
 
+use Exception;
 use Tickets\Models\Ticket;
 
 class JsonPresenter
 {
-public function presentTickets(array $tickets){}
+public function presentTickets(array $tickets){
+    throw new Exception('empty');
+}
 }
