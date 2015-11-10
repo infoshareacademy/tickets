@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fiona
- * Date: 06.11.15
- * Time: 14:00
- */
 
 namespace Tickets\Controllers;
 
@@ -37,11 +31,18 @@ class TicketsController
 
     public function collectTickets()
     {
-        $tickets = '';
+        $result = [];
 
-        $this->allegroBridge->getConcertTickets();
-        $this->allegroBridge->getSportTickets();
-        $this->JsonPresenter->presentTickets($tickets);
+        // get concert tickets array
+        $result[] = $this->allegroBridge->getConcertTickets();
+        // get sport tickets array
+        $result[] = $this->allegroBridge->getSportTickets();
+
+        // convert tickets array to json
+        $this->JsonPresenter->presentTickets($result);
+
+        // return json
+        return true;
 
     }
 
