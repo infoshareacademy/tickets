@@ -31,18 +31,18 @@ class TicketsController
 
     public function collectTickets()
     {
-        $result = [];
-
         // get concert tickets array
-        $result[] = $this->allegroBridge->getConcertTickets();
+        $arr1 = $this->allegroBridge->getConcertTickets();
         // get sport tickets array
-        $result[] = $this->allegroBridge->getSportTickets();
+        $arr2 = $this->allegroBridge->getSportTickets();
+        $result = array_merge((array)$arr1, (array)$arr2);
 
-        // convert tickets array to json
-        $this->JsonPresenter->presentTickets($result);
+
+//        // convert tickets array to json
+//        $this->JsonPresenter->presentTickets($result);
 
         // return json
-        return true;
+        return $this->JsonPresenter->presentTickets($result);
 
     }
 

@@ -12,7 +12,7 @@ use Tickets\Models\Ticket;
 
 class TicketsControllerTest extends \PHPUnit_Framework_TestCase
 {
-    private $instance;
+//    private $instance;
 
     //koncerty
 
@@ -28,7 +28,7 @@ class TicketsControllerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    // sprtowe
+    // sportowe
 
     public function testCollectedSportTickets()
     {
@@ -77,8 +77,6 @@ class TicketsControllerTest extends \PHPUnit_Framework_TestCase
 
         // when
         $instance->collectTickets();
-
-        // then
 
 
     }
