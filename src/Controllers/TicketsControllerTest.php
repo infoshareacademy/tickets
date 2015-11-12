@@ -13,7 +13,7 @@ use Tickets\Models\Ticket;
 class TicketsControllerTest extends \PHPUnit_Framework_TestCase
 {
 //    private $instance;
-
+git
     //koncerty
 
     public function testCollectedConcertTickets()
