@@ -6,14 +6,14 @@ use Tickets\Models\Ticket;
 
 class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_shouldReturnEmptyArrayWhenEmptyArrayInInput()
+    public function test_shouldReturnEmptyJsonWhenEmptyArrayInInput()
     {
         $instance = new JsonPresenter();
 
         $tickets = array();
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals(array(), $result);
+        $this->assertEquals('[]', $result);
     }
 
     /**
@@ -45,11 +45,11 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals(array(
-            '{"title":"Title",' .
+        $this->assertEquals((
+            '[{"title":"Title",' .
             '"auctionUrl":"http:\/\/fancyportalwithtickets.com",' .
             '"description":"A couple of words why this concert is such a Must Go",' .
-            '"price":"100PLN","type":"concert"}'
+            '"price":"100PLN","type":"concert"}]'
         ), $result);
     }
 
@@ -96,7 +96,7 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
         $result = $instance->presentTickets($tickets);
     }
 
-    public function _test_shouldReturnArrayOfJsonsWhenManyObjectsInInput()
+    public function test_shouldReturnArrayOfJsonsWhenManyObjectsInInput()
     {
         $instance = new JsonPresenter();
 
@@ -121,15 +121,7 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 
         $result = $instance->presentTickets($tickets);
 
-        $expectedResult = '[{
-            "title" : "Title",
-        "auctionUrl" : "http://fancyportalwithtickets.com",
-        "description" : "A couple of words why this concert is such a Must Go",
-        "price" : "100PLN"},{
-            "title" : "Title",
-        "auctionUrl" : "http://fancyportalwithtickets.com",
-        "description" : "A couple of words why this concert is such a Must Go",
-        "price" : "100PLN"}]';
+        $expectedResult = '[{"title":"Title","auctionUrl":"http:\/\/fancyportalwithtickets.com","description":"A couple of words why this concert is such a Must Go","price":"100PLN","type":"sport"},{"title":"different title","auctionUrl":"http:\/\/ecommercewithtickets.com","description":"Short text trying to convince us that this event is worth our monthly salary","price":"1200PLN","type":null}]';
 
         $this->assertEquals($expectedResult, $result);
     }
