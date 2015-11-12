@@ -15,12 +15,7 @@ use Tickets\Models\Ticket;
 class JsonPresenter
 {
     public function presentTickets(array $tickets){
-        $result = array();
-
-        foreach ($tickets as $ticket) {
-            $item = json_encode($ticket);
-            $result[] = $item;
-        }
+        $result = json_encode($tickets);
 
         return $result;
     }
