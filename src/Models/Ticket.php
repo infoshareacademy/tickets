@@ -9,6 +9,7 @@ class Ticket
     private $description;
     private $price;
 
+
     public function __get($param_name){
         return $this->$param_name;
     }
