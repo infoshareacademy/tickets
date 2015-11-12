@@ -2,33 +2,34 @@
 
 namespace Tickets\Presenters;
 
-require_once '../vendor/autoload.php';
-
 use Tickets\Models\Ticket;
 
 class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 {
-    public function _test_shouldReturnEmptyArrayWhenEmptyArrayInInput(){
+    public function test_shouldReturnEmptyArrayWhenEmptyArrayInInput()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array();
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals('[]', $result);
+        $this->assertEquals(array(), $result);
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #empty#
      */
-    public function test_shouldThrowNewExceptionWhenNoArrayInInput(){
+    public function _test_shouldThrowNewExceptionWhenWrongInput()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array('someRandomTextNotMatchingThePattern');
         $result = $instance->presentTickets($tickets);
     }
 
-    public function _test_shouldReturnArrayWithOneJsonWhenOneObjectInInput(){
+    public function test_shouldReturnArrayWithOneJsonWhenOneObjectInInput()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array();
@@ -44,18 +45,20 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 
         $result = $instance->presentTickets($tickets);
 
-        $this->assertEquals('[{
-        "title" : "Title",
-        "auctionUrl" : "http://fancyportalwithtickets.com",
-        "description" : "A couple of words why this concert is such a Must Go",
-        "price" : "100PLN"}]', $result);
+        $this->assertEquals(array(
+            '{"title":"Title",' .
+            '"auctionUrl":"http:\/\/fancyportalwithtickets.com",' .
+            '"description":"A couple of words why this concert is such a Must Go",' .
+            '"price":"100PLN","type":"concert"}'
+        ), $result);
     }
 
     /**
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #invalid.*#
      */
-    public function _test_shouldThrowNewExceptionWhenWrongTicketObject(){
+    public function _test_shouldThrowNewExceptionWhenWrongTicketObject()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array();
@@ -77,7 +80,8 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessageRegExp #missing.*#
      */
 
-    public function _test_shouldThrowNewExceptionWhenMissingDataInObject(){
+    public function _test_shouldThrowNewExceptionWhenMissingDataInObject()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array();
@@ -92,7 +96,8 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
         $result = $instance->presentTickets($tickets);
     }
 
-    public function _test_shouldReturnArrayOfJsonsWhenManyObjectsInInput(){
+    public function _test_shouldReturnArrayOfJsonsWhenManyObjectsInInput()
+    {
         $instance = new JsonPresenter();
 
         $tickets = array();
