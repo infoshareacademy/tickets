@@ -8,7 +8,19 @@
 
 namespace Tickets\Routers;
 
+use Symfony\Component\HttpFoundation\Response;
+use Tickets\Controllers\TicketsController;
+
 class CollectorRouter
 {
-public function getTickets(){}
+    public function getTickets(){
+        try {
+            $call = new TicketsController();
+            $tickets = $call->collectTickets();
+
+            return new Response($tickets);
+        } catch (\Exception $e) {
+
+        }
+    }
 }
