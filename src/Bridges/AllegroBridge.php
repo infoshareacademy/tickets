@@ -34,7 +34,7 @@ class AllegroBridge
         } else if (empty($this->rawAllegroTickets) === true ) {
             return null;
         } else {
-            return $this->transformToTicketObjects($this->rawAllegroTickets);
+            return $this->transformToTicketObjects($this->rawAllegroTickets, $query);
         }
     }
 
@@ -46,16 +46,20 @@ class AllegroBridge
         } else if (empty($this->rawAllegroTickets) === true ) {
             return null;
         } else {
-            return $this->transformToTicketObjects($this->rawAllegroTickets);
+            return $this->transformToTicketObjects($this->rawAllegroTickets, $query);
         }
     }
 
     private function createRawAllegroTickets($params, $connector = null)
     {
-        return  $this->connector->getItems($params);
+            try {
+                return $this->connector->getItems($params);
+            } catch (\Exception $e){
+                throw new \ErrorException ($e->getMessage());
+            }
     }
 
-    private function transformToTicketObjects ($rawAllegroTicketsArr) {
+    private function transformToTicketObjects ($rawAllegroTicketsArr, $type = '') {
         $rawAllegroTicketsArr = json_decode(json_encode($rawAllegroTicketsArr),true);
         foreach ($rawAllegroTicketsArr as $rawTicket) {
             $ticket =  new Ticket();
@@ -63,12 +67,11 @@ class AllegroBridge
             $ticket->auctionUrl = 'http://allegro.pl/show_item.php?item=' .$rawTicket['itemInfo']['itId'];
             $ticket->description = $rawTicket['itemInfo']['itDescription'];
             $ticket->price = $rawTicket['itemInfo']['itPrice'];
+            $ticket->type = $type;
             $this ->tickets[] = $ticket;
         }
 
         return $this->tickets;
     }
-
-
 
 }
