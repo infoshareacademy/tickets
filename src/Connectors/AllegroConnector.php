@@ -2,7 +2,7 @@
 /**
  * Created by PhpStorm.
  * User: katban
- * Date: 05-06.11.15
+ * Date: 09.11.15
  * Time: 16:36
  */
 
@@ -23,18 +23,20 @@ class AllegroConnector
     private static $idSession;
 
     private $client;
-    private $errorOperation;
 
     public function __construct($client = null)
     {
         if($client) {
             $this->client = $client;
         } else {
-            $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
-            $this->client = new \SoapClient(self::APIURL, $options);
+            try {
+                $options['features'] = SOAP_SINGLE_ELEMENT_ARRAYS;
+                $this->client = new \SoapClient(self::APIURL, $options);
+            }
+            catch (\SoapFault $error) {
+                $this->setError($error->faultcode, $error->faultstring);
+            }
         }
-//todo: throw exceptions
-//        $this->errorOperation = null;
         $this->login();
     }
 
@@ -57,7 +59,7 @@ class AllegroConnector
             self::$idSession = $response->sessionHandlePart;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+            $this->setError($error->faultcode, $error->faultstring);
         }
 
     }
@@ -80,7 +82,7 @@ class AllegroConnector
             $this->apiVersion = $status->sysCountryStatus->item[0]->verKey;
         }
         catch (\SoapFault $error) {
-            $this->errorOperation = 'Error '. $error->faultcode . ': '. $error->faultstring;
+            $this->setError($error->faultcode, $error->faultstring);
         }
     }
 
@@ -93,8 +95,16 @@ class AllegroConnector
             'countryId' => 1,
             'webapiKey' => self::APIKEY
         ];
-        $itemList = $this->client->doGetItemsList($request);
-        $list = $itemList->itemsList->item;
+
+        try {
+            $itemList = $this->client->doGetItemsList($request);
+            $list = $itemList->itemsList->item;
+        }
+        catch (\SoapFault $error) {
+
+            $this->setError($error->faultcode, $error->faultstring);
+            $list = [];
+        }
         $idTable = [];
 
         foreach ($list as $itemArray) {
@@ -113,8 +123,13 @@ class AllegroConnector
             'getDesc' => 1,
             'itemsIdArray' => $tableId
         ];
-        $response = $this->client->doGetItemsInfo($request);
-        //it needs error handeling
+        try {
+            $response = $this->client->doGetItemsInfo($request);
+        }
+        catch (\SoapFault $error) {
+            $this->setError($error->faultcode, $error->faultstring);
+            $response = [];
+        }
         return $response;
     }
 
@@ -140,8 +155,12 @@ class AllegroConnector
         return $collectionItems;
     }
 
-    public function getItems($methodName) {
-        switch ($methodName) {
+    private function setError($errorFromAllegro, $description) {
+        throw new \ErrorException('Error '. $errorFromAllegro . ': '. $description);
+    }
+
+    public function getItems($category) {
+        switch ($category) {
             case 'sport':
                 $idCategoryInAllegro = 101373;
                 break;
@@ -153,21 +172,19 @@ class AllegroConnector
             default:
                 $idCategoryInAllegro = null;
         }
+
         if ($idCategoryInAllegro) {
             $itemsId = $this->collectId($idCategoryInAllegro);
             $allItems = $this->getDetails($itemsId);
-            print_r($allItems);
         }
         else {
-            $allItems = [
-                'error' => 'This category is not defined'
-            ];
+            $this->setError('category', 'Wrong parametr in getItems');
         }
+
         return $allItems;
+
     }
 
 }
-//
-$zapytanie = new AllegroConnector();
-$zapytanie->getItems('sport');
+
 

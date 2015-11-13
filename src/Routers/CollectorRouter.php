@@ -8,7 +8,14 @@
 
 namespace Tickets\Routers;
 
+use Tickets\Controllers\TicketsController;
+
 class CollectorRouter
 {
-public function getTickets(){}
+    public function getTickets(){
+        $call = new TicketsController();
+        $tickets = $call->collectTickets();
+
+        return $tickets;
+    }
 }
