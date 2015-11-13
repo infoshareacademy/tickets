@@ -39,7 +39,7 @@ class AllegroBridge
     }
 
     public function getConcertTickets(){
-        $query = 'concert';
+        $query = 'music';
         $this->rawAllegroTickets = $this->createRawAllegroTickets($query);
         if (isset($this->rawAllegroTickets['error']) === true && empty($this->rawAllegroTickets['error']) === false ) {
             return $this->tickets = ['error' => 1];
