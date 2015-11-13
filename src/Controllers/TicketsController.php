@@ -27,8 +27,6 @@ class TicketsController
     }
 
 
-//    protected $tickets = array ();
-
     public function collectTickets()
     {
         // get concert tickets array
@@ -38,16 +36,9 @@ class TicketsController
         $result = array_merge((array)$arr1, (array)$arr2);
 
 
-//        // convert tickets array to json
-//        $this->JsonPresenter->presentTickets($result);
-
-        // return json
         return $this->JsonPresenter->presentTickets($result);
 
     }
-
-//$this-> = $ticketData['idClient'];
-
 
 }
 

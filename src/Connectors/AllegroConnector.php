@@ -156,7 +156,7 @@ class AllegroConnector
         if ($idCategoryInAllegro) {
             $itemsId = $this->collectId($idCategoryInAllegro);
             $allItems = $this->getDetails($itemsId);
-            print_r($allItems);
+
         }
         else {
             $allItems = [
@@ -168,6 +168,4 @@ class AllegroConnector
 
 }
 //
-$zapytanie = new AllegroConnector();
-$zapytanie->getItems('sport');
 
