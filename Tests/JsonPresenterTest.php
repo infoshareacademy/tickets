@@ -18,9 +18,9 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #empty#
+     * @expectedExceptionMessageRegExp #format#
      */
-    public function _test_shouldThrowNewExceptionWhenWrongInput()
+    public function test_shouldThrowNewExceptionWhenWrongInput()
     {
         $instance = new JsonPresenter();
 
@@ -53,48 +53,6 @@ class JsonPresenterTest extends \PHPUnit_Framework_TestCase
         ), $result);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp #invalid.*#
-     */
-    public function _test_shouldThrowNewExceptionWhenWrongTicketObject()
-    {
-        $instance = new JsonPresenter();
-
-        $tickets = array();
-
-        $oneTicket = new Ticket();
-        $oneTicket->title = 'Title';
-        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
-        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
-        $oneTicket->price = '100PLN';
-        $oneTicket->type = 'concert';
-
-        $tickets[] = $oneTicket;
-
-        $result = $instance->presentTickets($tickets);
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessageRegExp #missing.*#
-     */
-
-    public function _test_shouldThrowNewExceptionWhenMissingDataInObject()
-    {
-        $instance = new JsonPresenter();
-
-        $tickets = array();
-
-        $oneTicket = new Ticket();
-        $oneTicket->title = 'Title';
-        $oneTicket->auctionUrl = 'http://fancyportalwithtickets.com';
-        $oneTicket->description = 'A couple of words why this concert is such a Must Go';
-
-        $tickets[] = $oneTicket;
-
-        $result = $instance->presentTickets($tickets);
-    }
 
     public function test_shouldReturnArrayOfJsonsWhenManyObjectsInInput()
     {
