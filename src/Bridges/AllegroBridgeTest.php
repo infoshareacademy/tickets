@@ -23,7 +23,6 @@ class AllegroBridgeTest extends \PHPUnit_Framework_TestCase
                         'itName' => 'Bilety Polska Czechy Bilet Wrocław TANIO HIT',
                         'itPrice' => 15,
                         'itDescription' => 'description',
-                        'auctionUrl' => '',
                 )
             );
         $ticketMock[] =
@@ -33,7 +32,6 @@ class AllegroBridgeTest extends \PHPUnit_Framework_TestCase
                         'itName' => 'TANIO HIT',
                         'itPrice' => 231,
                         'itDescription' => 'description',
-                        'auctionUrl' => 'http://allegro.pl',
                 )
             );
 
@@ -50,6 +48,7 @@ class AllegroBridgeTest extends \PHPUnit_Framework_TestCase
         $ticket->description = 'description';
         $ticket->price = 15;
         $ticket->auctionUrl = 'http://allegro.pl/show_item.php?item=5762155520';
+        $ticket->type = 'sport';
 
         // then
         $this->assertEquals($ticket, $result[0]);
@@ -122,6 +121,7 @@ class AllegroBridgeTest extends \PHPUnit_Framework_TestCase
         $ticket->description = 'description';
         $ticket->price = 0;
         $ticket->auctionUrl = 'http://allegro.pl/show_item.php?item=5781922684';
+        $ticket->type = 'concert';
 
         // then
         $this->assertEquals($ticket, $result[0]);
