@@ -67,11 +67,14 @@ class AllegroBridge
             $ticket->auctionUrl = 'http://allegro.pl/show_item.php?item=' .$rawTicket['itemInfo']['itId'];
             $ticket->description = $rawTicket['itemInfo']['itDescription'];
             //
-            $itBuyNow = $rawAllegroTicketsArr['itBuyNowActive'];
-            if($itBuyNow) {
-
+            $itBuyNow = $rawTicket['itemInfo']['itBuyNowActive'];
+            $itBuyNow ? $priceBuyNow = $rawTicket['itemInfo']['itBuyNowPrice'] : $priceBuyNow = null;
+            if($priceBuyNow) {
+                $ticket->price = $rawTicket['itemInfo']['itPrice'] . ' ('. $priceBuyNow.')';
             }
-            $ticket->price = $rawTicket['itemInfo']['itPrice'];
+            else {
+                $ticket->price = $rawTicket['itemInfo']['itPrice'];
+            }
             $ticket->type = $type;
             $this ->tickets[] = $ticket;
         }
@@ -80,3 +83,4 @@ class AllegroBridge
     }
 
 }
+
